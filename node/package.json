@@ -1,0 +1,36 @@
+{
+  "name": "wifiduino",
+  "version": "0.0.1",
+  "description": "bindings for arduino similar to those for photon dev boards",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CyrusRoshan/wifiduino.git"
+  },
+  "keywords": [
+    "arduino",
+    "photon",
+    "wifi",
+    "network",
+    "post",
+    "binding"
+  ],
+  "author": "Cyrus Roshan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CyrusRoshan/wifiduino/issues"
+  },
+  "homepage": "https://github.com/CyrusRoshan/wifiduino#readme",
+  "dependencies": {
+    "bluebird": "^3.3.4",
+    "co": "^4.6.0",
+    "inquirer": "^0.12.0",
+    "koa": "^1.2.0",
+    "localtunnel": "^1.8.1",
+    "serialport": "^2.0.6"
+  }
+}
