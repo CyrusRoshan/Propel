@@ -42,7 +42,8 @@ co(function* () {
         name: 'doTunnel',
         message: 'Make server acessible remotely using localtunnel?',
         default: false
-      }], input => resolve(input));
+      }
+    ], input => resolve(input));
   });
 
   console.log(answers);
@@ -53,9 +54,9 @@ co(function* () {
   }
 
   answers.serialPort = new SerialPort(answers.usbPort, {
-      baudrate: answers.baud,
-      parser: serialPort.parsers.raw,
-      disconnectedCallback: () => console.alert('Arduino Disconnected')
+    baudrate: answers.baud,
+    parser: serialPort.parsers.raw,
+    disconnectedCallback: () => console.alert('Arduino Disconnected')
   }, true);
 
   answers.serialPort.on('open', () => {

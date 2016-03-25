@@ -1,7 +1,7 @@
 # Wifiduino
 bindings for Arduino boards similar to those for Particle boards
 
-Wifiduino attempts to copy the functionality and syntax of Particle bindings such that code made for use with Wifiduino can be used on a Particle and vice versa simply by replacing all instances of Wifiduino with Particle or vice versa.
+Wifiduino attempts to copy the functionality and syntax of Particle bindings except when changing the syntax makes it easier to use.
 
 # Installation and Setup
   1. Clone the repo

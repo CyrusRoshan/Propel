@@ -1,7 +1,7 @@
 {
   "name": "wifiduino",
   "version": "0.0.1",
-  "description": "bindings for arduino similar to those for photon dev boards",
+  "description": "bindings for Arduino boards similar to those for Particle boards",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,6 +13,7 @@
   },
   "keywords": [
     "arduino",
+    "particle",
     "photon",
     "wifi",
     "network",
