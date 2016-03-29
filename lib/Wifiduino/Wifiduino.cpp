@@ -8,7 +8,7 @@
 
 VarDict* createVarDict();
 VarNode* findVarNode(char*);
-VarNode* appendVarNode(char*);
+VarNode* appendVarNode(char*, void*, int);
 void deleteVarNode(char*);
 //FunctDict* createFunctDict();
 
@@ -18,7 +18,6 @@ void createWifiduino() {
     wifi = *((Wifiduino *) malloc(sizeof(Wifiduino)));
     wifi.varDict = createVarDict();
     wifi.variable = wifi.varDict->appendVarNode;
-    wifi.test = 50;
     //wifiduino->functDict = createFunctDict();
 }
 //createWifiduino();
@@ -103,13 +102,17 @@ VarNode* findVarNode(char* name) {
     return NULL;
 }
 
-VarNode* appendVarNode(char* name) {
+VarNode* appendVarNode(char* name, void* location, int varType) {
     VarDict* varDict = wifi.varDict;
     VarNode* ptr = varDict->head;
+
+    VarNode* varNode = (VarNode *) malloc(sizeof(VarNode));
+    varNode->name = name;
+    varNode->location = location;
+    varNode->varType = varType;
+    varNode->next = NULL;
+
     if (!ptr) {
-        VarNode* varNode = (VarNode *) malloc(sizeof(VarNode));
-        varNode->name = name;
-        varNode->next = NULL;
         varDict->head = varNode;
         return varNode;
     }
@@ -118,9 +121,6 @@ VarNode* appendVarNode(char* name) {
             return ptr;
         }
     }
-    VarNode* varNode = (VarNode *) malloc(sizeof(VarNode));
-    varNode->name = name;
-    varNode->next = NULL;
     ptr->next = varNode;
     return varNode;
 }

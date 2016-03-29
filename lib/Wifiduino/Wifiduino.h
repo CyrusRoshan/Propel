@@ -16,10 +16,9 @@ typedef struct VarNode VarNode;
 //////////////////////////////
 void createWifiduino();
 typedef struct Wifiduino {
-    void (*function)(char*, void*);
-    VarNode* (*variable)(char*);
+    void (*function)(char*, void*, int);
+    VarNode* (*variable)(char*, void*, int);
     VarDict* varDict;
-    int test;
     //FunctDict* functDict;
 } Wifiduino;
 
@@ -32,7 +31,7 @@ typedef struct VarDict {
     void (*sendValue)(char*, int);
     void (*storeVar)(char*, int, int);
     VarNode* (*findVarNode)(char*);
-    VarNode* (*appendVarNode)(char*);
+    VarNode* (*appendVarNode)(char*, void*, int);
     void (*deleteVarNode)(char*);
     VarNode* head;
 } VarDict;
