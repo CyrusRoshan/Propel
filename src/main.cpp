@@ -1,4 +1,4 @@
-#include <Wifiduino.c>
+#include <Wifiduino.h>
 
 void setup() {
   Serial.begin(9600);
@@ -11,5 +11,6 @@ void loop() {
   //Serial.println(isNegative(5));
   //total_foo = 12;
   Serial.println(foo(millis()));
+  Serial.println("TEST");
   delay(1000);
 }
