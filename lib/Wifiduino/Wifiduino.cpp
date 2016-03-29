@@ -124,7 +124,7 @@ void readMessage() {
                     if (nodeToRead) {
                         writeMessage(nodeToRead, msgNum);
                     } else {
-                        Serial.println("[false]");
+                        Serial.println("false");
                         free(value);
                     }
                     free(msgNum);
@@ -157,7 +157,7 @@ void readMessage() {
                         }
                         writeMessage(nodeToChange, msgNum);
                     } else {
-                        Serial.println("[false]");
+                        Serial.println("false");
                         free(value);
                     }
                     free(msgNum);
@@ -175,9 +175,9 @@ void writeMessage(VarNode* varNode, char* msgNum) {
   char* stringValue = charray(varNode->location, varNode->varType);
   Serial.print("[");
   Serial.print(msgNum);
-  Serial.print(", ");
+  Serial.print(", \"");
   Serial.print(varNode->name);
-  Serial.print(", ");
+  Serial.print("\", ");
   Serial.print(stringValue);
   Serial.print(", ");
   Serial.print(varNode->varType);
