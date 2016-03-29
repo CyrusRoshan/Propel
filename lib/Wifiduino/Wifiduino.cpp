@@ -68,6 +68,7 @@ char* msgNum;
 char* name;
 char* type;
 char* value;
+char* temp;
 void readMessage() {
     char ch;
     while(Serial.available()) {
@@ -83,7 +84,7 @@ void readMessage() {
         Serial.print(", ");
         Serial.print(value);
         Serial.print("]");
-        Serial.print("readingPosition: ");
+        Serial.print(", readingPosition: ");
         Serial.println(readingPosition);
         switch(readingPosition) {
             case 0:
@@ -93,7 +94,10 @@ void readMessage() {
                 }
                 break;
             case 1:
-                msgNum = (char *) realloc(msgNum, sizeof(char) * 2 + sizeof(msgNum));
+                temp = msgNum;
+                msgNum = (char *) calloc(sizeof(msgNum) + 1, sizeof(char));
+                strncat(msgNum, temp, sizeof(temp));
+                free(temp);
                 if (ch == ',') {
                     readingPosition++;
                     strncat(msgNum, "\0", 1);
@@ -103,7 +107,10 @@ void readMessage() {
                 }
                 break;
             case 2:
-                name = (char *) realloc(name, sizeof(char) * 2 + sizeof(name));
+                temp = name;
+                name = (char *) calloc(sizeof(name) + 1, sizeof(char));
+                strncat(name, temp, sizeof(temp));
+                free(temp);
                 if (ch == ',') {
                     readingPosition++;
                     strncat(name, "\0", 1);
@@ -113,7 +120,10 @@ void readMessage() {
                 }
                 break;
             case 3:
-                type = (char *) realloc(type, sizeof(char) * 2 + sizeof(type));
+                temp = type;
+                type = (char *) calloc(sizeof(type) + 1, sizeof(char));
+                strncat(type, temp, sizeof(temp));
+                free(temp);
                 if (ch == ',') {
                     readingPosition++;
                     strncat(type, "\0", 1);
@@ -123,7 +133,10 @@ void readMessage() {
                 }
                 break;
             case 4:
-                value = (char *) realloc(value, sizeof(char) + sizeof(value));
+                temp = value;
+                value = (char *) calloc(sizeof(value) + 1, sizeof(char));
+                strncat(value, temp, sizeof(temp));
+                free(temp);
                 if (ch == ']') {
                     readingPosition++;
                     strncat(value, "\0", 1);
