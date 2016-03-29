@@ -75,7 +75,7 @@ void readMessage() {
     char ch;
     while(Serial.available()) {
         ch = Serial.read();
-        Serial.print("Character: ");
+        /*Serial.print("Character: ");
         Serial.println(ch);
         Serial.print("Message: [");
         Serial.print(msgNum);
@@ -87,7 +87,7 @@ void readMessage() {
         Serial.print(value);
         Serial.print("]");
         Serial.print(", readingPosition: ");
-        Serial.println(readingPosition);
+        Serial.println(readingPosition);*/
         switch(readingPosition) {
             case 0:
                 if (ch == '[') {
