@@ -9,7 +9,7 @@
 VarDict* createVarDict();
 VarNode* findVarNode(char*);
 VarNode* appendVarNode(char*, void*, int);
-void readMessage(char*, char*, char*, char*);
+void readMessage();
 void deleteVarNode(char*);
 //FunctDict* createFunctDict();
 
@@ -62,42 +62,71 @@ char* charray(void* value, int type) {
     return returnArray;
 }
 
-//<M:N:T:V>
+//[M,N,T,V]
 int readingPosition = 0;
-void readMessage(char* msgNum, char* name, char* type, char* value) {
+char* msgNum;
+char* name;
+char* type;
+char* value;
+void readMessage() {
     char ch;
     while(Serial.available()) {
         ch = Serial.read();
+        Serial.print("Character: ");
+        Serial.println(ch);
+        Serial.print("Message: [");
+        Serial.print(msgNum);
+        Serial.print(", ");
+        Serial.print(name);
+        Serial.print(", ");
+        Serial.print(type);
+        Serial.print(", ");
+        Serial.print(value);
+        Serial.print("]");
+        Serial.print("readingPosition: ");
+        Serial.println(readingPosition);
         switch(readingPosition) {
             case 0:
-                readingPosition = (ch == '<' ? readingPosition + 1 : 0);
+                if (ch == '[') {
+                    readingPosition++;
+                    msgNum = (char*) calloc(1, sizeof(char));
+                }
                 break;
             case 1:
-                if (ch == ':') { //read message num
+                msgNum = (char *) realloc(msgNum, sizeof(char) * 2 + sizeof(msgNum));
+                if (ch == ',') {
                     readingPosition++;
+                    strncat(msgNum, "\0", 1);
+                    name = (char*) calloc(1, sizeof(char));
                 } else {
-                    msgNum = (char *) realloc(msgNum, sizeof(msgNum) + 1);
                     strncat(msgNum, &ch, 1);
                 }
                 break;
             case 2:
-                if (ch == ':') { //read message num
+                name = (char *) realloc(name, sizeof(char) * 2 + sizeof(name));
+                if (ch == ',') {
                     readingPosition++;
+                    strncat(name, "\0", 1);
+                    type = (char*) calloc(1, sizeof(char));
                 } else {
-                    name = (char *) realloc(name, sizeof(name) + 1);
                     strncat(name, &ch, 1);
                 }
                 break;
             case 3:
-                if (ch == ':') { //read message num
+                type = (char *) realloc(type, sizeof(char) * 2 + sizeof(type));
+                if (ch == ',') {
                     readingPosition++;
+                    strncat(type, "\0", 1);
+                    value = (char*) calloc(1, sizeof(char));
                 } else {
-                    type = (char *) realloc(type, sizeof(type) + 1);
                     strncat(type, &ch, 1);
                 }
                 break;
             case 4:
-                if (ch == '>') { //read message num
+                value = (char *) realloc(value, sizeof(char) + sizeof(value));
+                if (ch == ']') {
+                    readingPosition++;
+                    strncat(value, "\0", 1);
                     readingPosition = 0;
                     Serial.println("VVVV");
                     Serial.println(msgNum);
@@ -110,7 +139,6 @@ void readMessage(char* msgNum, char* name, char* type, char* value) {
                     free(type);
                     free(value);
                 } else {
-                    value = (char *) realloc(value, sizeof(value) + 1);
                     strncat(value, &ch, 1);
                 }
                 break;

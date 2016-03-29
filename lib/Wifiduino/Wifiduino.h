@@ -17,7 +17,7 @@ typedef struct VarNode VarNode;
 typedef struct Wifiduino {
     void (*function)(char*, void*, int);
     VarNode* (*variable)(char*, void*, int);
-    void (*readMessage)(char*, char*, char*, char*);
+    void (*readMessage)();
     VarDict* varDict;
     //FunctDict* functDict;
 } Wifiduino;
