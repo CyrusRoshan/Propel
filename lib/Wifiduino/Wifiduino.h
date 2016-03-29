@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-enum returnType {CHAR, INT, FLOAT, DOUBLE};
+enum returnType {CHAR, INT, FLOAT};
 
 typedef struct Wifiduino Wifiduino;
 typedef struct VarDict VarDict;
@@ -18,6 +18,7 @@ typedef struct Wifiduino {
     void (*function)(char*, void*, int);
     VarNode* (*variable)(char*, void*, int);
     void (*readMessage)();
+    void (*writeMessage)(VarNode*, char*);
     VarDict* varDict;
     //FunctDict* functDict;
 } Wifiduino;

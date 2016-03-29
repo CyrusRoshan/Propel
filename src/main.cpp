@@ -12,7 +12,7 @@ void setup() {
 }
 
 void loop() {
-  //Serial.println(i++);
+  //Serial.println(test);
   // put your main code here, to run repeatedly:
   //Serial.println(isNegative(5));
   //total_foo = 12;

@@ -9,6 +9,7 @@
 VarDict* createVarDict();
 VarNode* findVarNode(char*);
 VarNode* appendVarNode(char*, void*, int);
+void writeMessage(VarNode*, char*);
 void readMessage();
 void deleteVarNode(char*);
 //FunctDict* createFunctDict();
@@ -20,6 +21,7 @@ void createWifiduino() {
     Wifi.varDict = createVarDict();
     Wifi.variable = Wifi.varDict->appendVarNode;
     Wifi.readMessage = readMessage;
+    Wifi.writeMessage = writeMessage;
     //Wifiduino->functDict = createFunctDict();
 }
 
@@ -47,8 +49,7 @@ char* charray(void* value, int type) {
             returnArray = (char*) malloc(size);
             snprintf(returnArray, size, "%d", *(int*)value);
             break;
-        case FLOAT:
-        case DOUBLE: {
+        case FLOAT: {
             size = 16;
             int d1 = *(float*)value;
             float f2 = *(float*)value - d1;
@@ -64,6 +65,7 @@ char* charray(void* value, int type) {
 
 //[M,N,T,V]
 int readingPosition = 0;
+int msgSize = 20;
 char* msgNum;
 char* name;
 char* type;
@@ -90,67 +92,77 @@ void readMessage() {
             case 0:
                 if (ch == '[') {
                     readingPosition++;
-                    msgNum = (char*) calloc(1, sizeof(char));
+                    msgNum = (char*) calloc(msgSize, sizeof(char));
                 }
                 break;
             case 1:
-                temp = msgNum;
-                msgNum = (char *) calloc(sizeof(msgNum) + 1, sizeof(char));
-                strncat(msgNum, temp, sizeof(temp));
-                free(temp);
                 if (ch == ',') {
                     readingPosition++;
                     strncat(msgNum, "\0", 1);
-                    name = (char*) calloc(1, sizeof(char));
+                    name = (char*) calloc(msgSize, sizeof(char));
                 } else {
                     strncat(msgNum, &ch, 1);
                 }
                 break;
             case 2:
-                temp = name;
-                name = (char *) calloc(sizeof(name) + 1, sizeof(char));
-                strncat(name, temp, sizeof(temp));
-                free(temp);
                 if (ch == ',') {
                     readingPosition++;
                     strncat(name, "\0", 1);
-                    type = (char*) calloc(1, sizeof(char));
+                    type = (char*) calloc(msgSize, sizeof(char));
                 } else {
                     strncat(name, &ch, 1);
                 }
                 break;
             case 3:
-                temp = type;
-                type = (char *) calloc(sizeof(type) + 1, sizeof(char));
-                strncat(type, temp, sizeof(temp));
-                free(temp);
                 if (ch == ',') {
                     readingPosition++;
                     strncat(type, "\0", 1);
-                    value = (char*) calloc(1, sizeof(char));
+                    value = (char*) calloc(msgSize, sizeof(char));
+                } else if (ch == ']'){
+                    readingPosition = 0;
+                    VarNode* nodeToRead = Wifi.varDict->findVarNode(name);
+                    if (nodeToRead) {
+                        writeMessage(nodeToRead, msgNum);
+                    } else {
+                        Serial.println("[false]");
+                        free(value);
+                    }
+                    free(msgNum);
+                    free(name);
+                    free(type);
                 } else {
                     strncat(type, &ch, 1);
                 }
                 break;
             case 4:
-                temp = value;
-                value = (char *) calloc(sizeof(value) + 1, sizeof(char));
-                strncat(value, temp, sizeof(temp));
-                free(temp);
                 if (ch == ']') {
-                    readingPosition++;
                     strncat(value, "\0", 1);
                     readingPosition = 0;
-                    Serial.println("VVVV");
-                    Serial.println(msgNum);
-                    Serial.println(name);
-                    Serial.println(type);
-                    Serial.println(value);
-                    Serial.println("^^^^");
+                    VarNode* nodeToChange = Wifi.varDict->findVarNode(name);
+                    if (nodeToChange) {
+                        switch (nodeToChange->varType) {
+                            case CHAR: {
+                                char* temp = (char*) nodeToChange->location;
+                                nodeToChange->location = value;
+                                free(temp);
+                                }break;
+                            case INT:
+                                *(int*) nodeToChange->location = (int)atoi(value);
+                                free(value);
+                                break;
+                            case FLOAT:
+                                *(float*) nodeToChange->location = (float)atof(value);
+                                free(value);
+                                break;
+                        }
+                        writeMessage(nodeToChange, msgNum);
+                    } else {
+                        Serial.println("[false]");
+                        free(value);
+                    }
                     free(msgNum);
                     free(name);
                     free(type);
-                    free(value);
                 } else {
                     strncat(value, &ch, 1);
                 }
@@ -159,14 +171,18 @@ void readMessage() {
     }
 }
 
-void writeMessage(char* msgNum, char* value) {
-    char* msg = (char*) malloc(((int)strlen(msgNum) + 1 + (int)strlen(value) + 9) * sizeof(char)); //whatever the size of msgNum is (max 6) + 1 for msgtype + whatever the length of value is + 9 for "<m:></m>"
-    strcat(msg, "<m:");
-    strcat(msg, msgNum);
-    strcat(msg, ">");
-    strcat(msg, value);
-    strcat(msg, "</m>");
-    //Serial.write(msg);
+void writeMessage(VarNode* varNode, char* msgNum) {
+  char* stringValue = charray(varNode->location, varNode->varType);
+  Serial.print("[");
+  Serial.print(msgNum);
+  Serial.print(", ");
+  Serial.print(varNode->name);
+  Serial.print(", ");
+  Serial.print(stringValue);
+  Serial.print(", ");
+  Serial.print(varNode->varType);
+  Serial.println("]");
+  free(stringValue);
 }
 
 VarNode* findVarNode(char* name) {
