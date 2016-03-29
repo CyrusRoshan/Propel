@@ -2,31 +2,31 @@
 #include <string.h>
 #include "Wifiduino.h"
 
-int foo(int x){
-  return x;
-}
-
 //////////////////////////////
 //Wifiduino itself
 //////////////////////////////
+
 VarDict* createVarDict();
+VarNode* findVarNode(char*);
+VarNode* appendVarNode(char*);
+void deleteVarNode(char*);
 //FunctDict* createFunctDict();
 
-Wifiduino* createWifiduino() {
-    Wifiduino* wifiduino = (Wifiduino *) malloc(sizeof(Wifiduino));
-    wifiduino->varDict = createVarDict();
+Wifiduino wifi;
+
+void createWifiduino() {
+    wifi = *((Wifiduino *) malloc(sizeof(Wifiduino)));
+    wifi.varDict = createVarDict();
+    wifi.variable = wifi.varDict->appendVarNode;
+    wifi.test = 50;
     //wifiduino->functDict = createFunctDict();
-    return wifiduino;
 }
+//createWifiduino();
 
 //////////////////////////////
 //for var access and storage
 //////////////////////////////
-VarNode* findVarNode(VarDict*, char*);
-VarNode* appendVarNode(VarDict*, char*);
-void deleteVarNode(VarDict*, char*);
-
-VarDict* createDict() {
+VarDict* createVarDict() {
     VarDict* varDict = (VarDict *) malloc(sizeof(VarDict));
     varDict->findVarNode = findVarNode;
     varDict->appendVarNode = appendVarNode;
@@ -91,7 +91,8 @@ void writeMessage(char* msgNum, char* msgType, char* value) {
     //Serial.write(msg);
 }
 
-VarNode* findVarNode(VarDict* varDict, char* name) {
+VarNode* findVarNode(char* name) {
+    VarDict* varDict = wifi.varDict;
     VarNode* ptr = varDict->head;
     while (ptr) {
         if (!strcmp(ptr->name, name)) { //if string literals are equal
@@ -102,7 +103,8 @@ VarNode* findVarNode(VarDict* varDict, char* name) {
     return NULL;
 }
 
-VarNode* appendVarNode(VarDict* varDict, char* name) {
+VarNode* appendVarNode(char* name) {
+    VarDict* varDict = wifi.varDict;
     VarNode* ptr = varDict->head;
     if (!ptr) {
         VarNode* varNode = (VarNode *) malloc(sizeof(VarNode));
@@ -123,7 +125,8 @@ VarNode* appendVarNode(VarDict* varDict, char* name) {
     return varNode;
 }
 
-void deleteVarNode(VarDict* varDict, char* name) {
+void deleteVarNode(char* name) {
+    VarDict* varDict = wifi.varDict;
     VarNode* prev = varDict->head;
     VarNode* ptr = NULL;
     if (!strcmp(ptr->name, name)) {
