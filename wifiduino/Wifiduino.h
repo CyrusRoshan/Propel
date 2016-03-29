@@ -7,9 +7,9 @@ enum returnType {CHAR, STRING, INT, FLOAT, DOUBLE};
 
 typedef struct Wifiduino Wifiduino;
 typedef struct VarDict VarDict;
+//typedef struct FunctDict FunctDict;
 typedef struct VarNode VarNode;
-typedef struct FunctNode FunctNode;
-typedef struct FunctDict FunctDict;
+//typedef struct FunctNode FunctNode;
 
 //////////////////////////////
 //Wifiduino itself
@@ -19,7 +19,7 @@ typedef struct Wifiduino {
     void (*function)(char*, void*);
     void (*variable)(char*, void*);
     VarDict* varDict;
-    FunctDict* functDict;
+    //FunctDict* functDict;
 } Wifiduino;
 
 //////////////////////////////
@@ -30,14 +30,14 @@ VarDict* createVarDict();
 typedef struct VarDict {
     void (*sendValue)(char*, int);
     void (*storeVar)(char*, int, int);
-    VarNode* (*findVarNode)(VarDict*, const char[]);
-    VarNode* (*appendVarNode)(VarDict*, const char[]);
-    void (*deleteVarNode)(VarDict*, const char[]);
+    VarNode* (*findVarNode)(VarDict*, char*);
+    VarNode* (*appendVarNode)(VarDict*, char*);
+    void (*deleteVarNode)(VarDict*, char*);
     VarNode* head;
 } VarDict;
 
 typedef struct VarNode {
-    const char* name;
+    char* name;
     void* location;
     int varType;
     VarNode* next;
@@ -46,7 +46,7 @@ typedef struct VarNode {
 //////////////////////////////
 //for funct access and storage
 //////////////////////////////
-FunctDict* createFunctDict();
+/*FunctDict* createFunctDict();
 typedef struct FunctDict {
     void (*sendValue)(char*, int);
     void (*storeVar)(char*, int, int);
@@ -58,6 +58,6 @@ typedef struct FunctNode {
     char* name;
     void* location;
     FunctNode* next;
-} FunctNode;
+} FunctNode;*/
 
 #endif

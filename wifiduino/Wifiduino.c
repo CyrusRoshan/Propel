@@ -7,23 +7,23 @@
 //Wifiduino itself
 //////////////////////////////
 VarDict* createVarDict();
-FunctDict* createFunctDict();
+//FunctDict* createFunctDict();
 
 Wifiduino* createWifiduino() {
     Wifiduino* wifiduino = malloc(sizeof(Wifiduino));
     wifiduino->varDict = createVarDict();
-    wifiduino->functDict = createFunctDict();
+    //wifiduino->functDict = createFunctDict();
     return wifiduino;
 }
 
 //////////////////////////////
 //for var access and storage
 //////////////////////////////
-VarNode* findVarNode(VarDict*, const char[]);
-VarNode* appendVarNode(VarDict*, const char[]);
-void deleteVarNode(VarDict*, const char[]);
+VarNode* findVarNode(VarDict*, char*);
+VarNode* appendVarNode(VarDict*, char*);
+void deleteVarNode(VarDict*, char*);
 
-VarDict* createVarDict() {
+VarDict* createDict() {
     VarDict* varDict = malloc(sizeof(VarDict));
     varDict->findVarNode = findVarNode;
     varDict->appendVarNode = appendVarNode;
@@ -32,7 +32,63 @@ VarDict* createVarDict() {
     return varDict;
 }
 
-VarNode* findVarNode(VarDict* varDict, const char name[]) {
+//<m:></m>
+bool readMessage(char* msgNum, char* varName) {
+    int position = 0;
+    char ch;
+    while(Serial.available()) {
+        ch = Serial.read();
+        switch(ch) {
+            case 0:
+                position = (ch == '<' ? position + 1 : 0);
+                break;
+            case 1:
+                position = (ch == 'm' ? position + 1 : 0);
+                break;
+            case 2:
+                position = (ch == ':' ? position + 1 : 0);
+                break;
+            case 3:
+                if (ch == ':') { //read message num
+                    position++;
+                    msgNum = (char *) realloc(msgNum, sizeof(msgNum) + 1);
+                    strncat(msgNum, &ch, 1);
+                }
+                break;
+            case 4:
+                if (ch == '>') {
+                    position++;
+                } else {
+                    free(msgNum);
+                    msgNum = NULL;
+                    position = 0;
+                }
+                break;
+            case 5:
+                if (ch == ':') { //read message num
+                    position++;
+                    msgNum = (char *) realloc(msgNum, sizeof(msgNum) + 1);
+                    strncat(msgNum, &ch, 1);
+                }
+            case 6:
+                position = (ch == '/' ? position + 1 : 0);
+                break;
+        }
+    }
+    if (msgNum && )
+}
+
+void writeMessage(char* msgNum, char* msgType, char* value) {
+    char* msg = (char*) malloc(((int)strlen(msgNum) + 1 + (int)strlen(value) + 9) * sizeof(char)); //whatever the size of msgNum is (max 6) + 1 for msgtype + whatever the length of value is + 9 for "<m:></m>"
+    strcat(msg, "<m:");
+    strcat(msg, msgNum);
+    strcat(msg, ">");
+    strcat(msg, value);
+    strcat(msg, "</m>");
+    //Serial.write(msg);
+}
+
+VarNode* findVarNode(VarDict* varDict, char* name) {
     VarNode* ptr = varDict->head;
     while (ptr) {
         if (!strcmp(ptr->name, name)) { //if string literals are equal
@@ -43,7 +99,7 @@ VarNode* findVarNode(VarDict* varDict, const char name[]) {
     return NULL;
 }
 
-VarNode* appendVarNode(VarDict* varDict, const char name[]) {
+VarNode* appendVarNode(VarDict* varDict, char* name) {
     VarNode* ptr = varDict->head;
     if (!ptr) {
         VarNode* varNode = malloc(sizeof(VarNode));
@@ -64,11 +120,12 @@ VarNode* appendVarNode(VarDict* varDict, const char name[]) {
     return varNode;
 }
 
-void deleteVarNode(VarDict* varDict, const char name[]) {
+void deleteVarNode(VarDict* varDict, char* name) {
     VarNode* prev = varDict->head;
     VarNode* ptr = NULL;
     if (!strcmp(ptr->name, name)) {
         varDict->head = varDict->head->next;
+        free(prev->name);
         free(prev);
         return;
     }
@@ -76,6 +133,7 @@ void deleteVarNode(VarDict* varDict, const char name[]) {
         ptr = prev->next;
         if (!strcmp(ptr->name, name)) { //if string literals are equal
             prev->next = ptr->next;
+            free(ptr->name);
             free(ptr);
             return;
         }
@@ -86,8 +144,8 @@ void deleteVarNode(VarDict* varDict, const char name[]) {
 //////////////////////////////
 //for funct access and storage
 //////////////////////////////
-FunctDict* createFunctDict() {
+/*FunctDict* createFunctDict() {
     FunctDict* functDict = malloc(sizeof(FunctDict));
     functDict->head = NULL;
     return functDict;
-}
+}*/
