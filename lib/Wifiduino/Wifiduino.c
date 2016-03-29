@@ -1,7 +1,10 @@
-//#include "Arduino.h"
-#include "Wifiduino.h"
 #include <stdlib.h>
 #include <string.h>
+#include "Wifiduino.h"
+
+int foo(int x){
+  return x;
+}
 
 //////////////////////////////
 //Wifiduino itself
@@ -10,7 +13,7 @@ VarDict* createVarDict();
 //FunctDict* createFunctDict();
 
 Wifiduino* createWifiduino() {
-    Wifiduino* wifiduino = malloc(sizeof(Wifiduino));
+    Wifiduino* wifiduino = (Wifiduino *) malloc(sizeof(Wifiduino));
     wifiduino->varDict = createVarDict();
     //wifiduino->functDict = createFunctDict();
     return wifiduino;
@@ -24,7 +27,7 @@ VarNode* appendVarNode(VarDict*, char*);
 void deleteVarNode(VarDict*, char*);
 
 VarDict* createDict() {
-    VarDict* varDict = malloc(sizeof(VarDict));
+    VarDict* varDict = (VarDict *) malloc(sizeof(VarDict));
     varDict->findVarNode = findVarNode;
     varDict->appendVarNode = appendVarNode;
     varDict->deleteVarNode = deleteVarNode;
@@ -33,11 +36,11 @@ VarDict* createDict() {
 }
 
 //<m:></m>
-bool readMessage(char* msgNum, char* varName) {
+void readMessage(char* msgNum, char* varName) {
     int position = 0;
     char ch;
-    while(Serial.available()) {
-        ch = Serial.read();
+    while(0){//Serial.available()) {
+        //ch = Serial.read();
         switch(ch) {
             case 0:
                 position = (ch == '<' ? position + 1 : 0);
@@ -75,7 +78,7 @@ bool readMessage(char* msgNum, char* varName) {
                 break;
         }
     }
-    if (msgNum && )
+    //if (msgNum && )
 }
 
 void writeMessage(char* msgNum, char* msgType, char* value) {
@@ -102,7 +105,7 @@ VarNode* findVarNode(VarDict* varDict, char* name) {
 VarNode* appendVarNode(VarDict* varDict, char* name) {
     VarNode* ptr = varDict->head;
     if (!ptr) {
-        VarNode* varNode = malloc(sizeof(VarNode));
+        VarNode* varNode = (VarNode *) malloc(sizeof(VarNode));
         varNode->name = name;
         varNode->next = NULL;
         varDict->head = varNode;
@@ -113,7 +116,7 @@ VarNode* appendVarNode(VarDict* varDict, char* name) {
             return ptr;
         }
     }
-    VarNode* varNode = malloc(sizeof(VarNode));
+    VarNode* varNode = (VarNode *) malloc(sizeof(VarNode));
     varNode->name = name;
     varNode->next = NULL;
     ptr->next = varNode;
@@ -141,10 +144,12 @@ void deleteVarNode(VarDict* varDict, char* name) {
     }
 }
 
+
+/*
 //////////////////////////////
 //for funct access and storage
 //////////////////////////////
-/*FunctDict* createFunctDict() {
+FunctDict* createFunctDict() {
     FunctDict* functDict = malloc(sizeof(FunctDict));
     functDict->head = NULL;
     return functDict;

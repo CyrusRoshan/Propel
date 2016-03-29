@@ -1,7 +1,9 @@
 #ifndef Wifiduino_h
 #define Wifiduino_h
 
-//#include "Arduino.h"
+#include <Arduino.h>
+
+int foo(int);
 
 enum returnType {CHAR, STRING, INT, FLOAT, DOUBLE};
 
@@ -43,10 +45,11 @@ typedef struct VarNode {
     VarNode* next;
 } VarNode;
 
+/*
 //////////////////////////////
 //for funct access and storage
 //////////////////////////////
-/*FunctDict* createFunctDict();
+FunctDict* createFunctDict();
 typedef struct FunctDict {
     void (*sendValue)(char*, int);
     void (*storeVar)(char*, int, int);
