@@ -1,5 +1,5 @@
 #include <Wifiduino.h>
-#include <Wifiduino.cpp>
+#include <Wifiduino.c>
 
 int ledStatus = 0;
 
