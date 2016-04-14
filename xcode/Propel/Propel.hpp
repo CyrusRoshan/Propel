@@ -10,8 +10,9 @@ class PropelBase { //all nested, because let's not interfere with devs' Arduino 
     private:
         class PropelNode {
             public:
+                PropelNode(std::string, void*);
                 PropelNode(std::string, void*, int);
-                std::string toString();
+                std::string varToString();
                 std::string name;
                 void* address;
                 int type;
@@ -21,22 +22,27 @@ class PropelBase { //all nested, because let's not interfere with devs' Arduino 
         class PropelDict {
             public:
                 PropelDict();
-                PropelNode* getNodeVal(std::string, int);
+                PropelNode* getNodeVal(std::string);
                 PropelNode* setNodeVal(std::string, void*, int);
                 void deleteNode(std::string);
                 PropelNode* head;
         };
 
         PropelDict varDict;
-        void writeMessage(PropelNode*, char*);
-        std::string readMessage();
+        PropelDict functDict;
     
     public:
         PropelBase();
         void function (std::string, void*);
         void variable(std::string, void*, int);
-        PropelNode debugFunction(std::string);
-        PropelNode debugVariable(std::string);
+    
+        void writeMessage(std:: string);
+        void readMessage();
+    
+        char serialRead();
+    
+        std::string getFunction(std::string);
+        std::string getVariable(std::string);
 } extern Propel;
 
 
