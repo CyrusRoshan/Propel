@@ -1,5 +1,5 @@
-#include <Arduino.h>
-#include <Propel.hpp>
+//#include <Arduino.h>
+#include "Propel.hpp"
 
 int ledStatus = 0;
 
@@ -18,3 +18,8 @@ void loop() {
 //void serialEvent(){ // this needs to be added for wifiduino to be able to read in data
   //Wifi.readMessage();
 //}
+
+int main() {
+    setup();
+    
+}

@@ -1,16 +1,19 @@
 #ifndef Propel_h
 #define Propel_h
 
-#include <Arduino.h>
+#include <string>//#include <Arduino.h>
+
 
 enum {BOOL, INT, CHAR, FLOAT, DOUBLE, STRING};
 
 class PropelBase { //all nested, because let's not interfere with devs' Arduino code more than we have to
   private:
+    
     class PropelNode {
       public:
-        PropelNode(const char*, void*, int);
-        const char* name;
+        PropelNode();
+        PropelNode(std::string, void*, int);
+        std::string name;
         void* address;
         int type;
         PropelNode* next;
@@ -18,21 +21,23 @@ class PropelBase { //all nested, because let's not interfere with devs' Arduino 
 
     class PropelDict {
       public:
-        void* getNode(char*, int);
-        void setNode(char*, void*, int);
-        void setNode(const char*, void*, int);
-        void deleteNode(char*);
-        void deleteNode(const char*);
+        PropelDict();
+        void* getNode(std::string, int);
+        void setNode(std::string, void*, int);
+        void deleteNode(std::string);
         PropelNode* head;
     };
 
     PropelDict varDict;
     void writeMessage(PropelNode*, char*);
-    String readMessage();
+    std::string readMessage();
+    
   public:
     PropelBase();
-    void function (const char*, void*);
-    void variable(const char*, void*, int);
+    void function (std::string, void*);
+    void variable(std::string, void*, int);
+    PropelNode debugFunction(std::string);
+    PropelNode debugVariable(std::string);
 } extern Propel;
 
 
